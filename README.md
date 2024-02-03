@@ -3,12 +3,19 @@
 
 Este proyecto proporciona una API y una interfaz de usuario (UI) para generar códigos QR basados en texto proporcionado por el usuario. Soporta la generación de códigos QR en formatos PNG y SVG.
 
+![Screenshot from 2024-02-03 15-13-33](https://github.com/eriktaveras/CodigoQR/assets/10116703/6feb8a0f-3bb2-4ae6-99c0-b6cbb8b96b97)
+
 ## Características
 
 - API construida con FastAPI para generar códigos QR.
 - Soporte para generar códigos QR en formatos PNG y SVG.
 - Interfaz de usuario construida con HTML y TailwindCSS que interactúa con la API.
 - Opciones de personalización para el color de relleno y el color de fondo del código QR.
+
+  
+![Screenshot from 2024-02-03 15-15-25](https://github.com/eriktaveras/CodigoQR/assets/10116703/dc744732-579a-4a3a-bbe4-ce3866cd5785)
+
+  
 
 ## Tecnologías Utilizadas
 
