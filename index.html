@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Códigos QR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col justify-center items-center">
+    <div class="max-w-md w-full space-y-8 p-6 bg-white shadow-md rounded-lg">
+        <h1 class="text-center text-3xl font-extrabold text-gray-900">Generador de Códigos QR</h1>
+        <form id="qrForm" class="mt-8 space-y-6">
+            <div class="space-y-2">
+                <label for="text" class="block text-sm font-medium text-gray-700">Texto a Codificar</label>
+                <input type="text" id="text" class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Ingresa el texto aquí" required>
+            </div>
+            <div class="flex justify-between space-x-2">
+                <div class="w-1/2 space-y-2">
+                    <label for="fillColor" class="block text-sm font-medium text-gray-700">Color del QR</label>
+                    <input type="color" id="fillColor" value="#000000" class="w-full h-10 border-gray-300 rounded-md">
+                </div>
+                <div class="w-1/2 space-y-2">
+                    <label for="backgroundColor" class="block text-sm font-medium text-gray-700">Color de Fondo</label>
+                    <input type="color" id="backgroundColor" value="#ffffff" class="w-full h-10 border-gray-300 rounded-md">
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label for="format" class="block text-sm font-medium text-gray-700">Formato:</label>
+                <select id="format" class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                    <option value="png">PNG</option>
+                    <option value="svg">SVG</option>
+                </select>
+            </div>
+            <button type="submit" class="relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150">
+                Generar QR
+            </button>
+        </form>
+        <div id="qrCodeContainer" class="flex justify-center mt-4"></div>
+    </div>
+
+    <script>
+        document.getElementById("qrForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const text = document.getElementById("text").value.trim();
+            const fillColor = document.getElementById("fillColor").value;
+            const backgroundColor = document.getElementById("backgroundColor").value;
+            const format = document.getElementById("format").value;
+            const qrCodeContainer = document.getElementById("qrCodeContainer");
+
+            qrCodeContainer.innerHTML = '<p class="text-blue-500">Generando código QR...</p>';
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/generate_qr", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ data: text, fillColor, backgroundColor, format })
+                });
+
+                if (response.ok) {
+                    if (format === "svg") {
+                        const qrSvg = await response.text();
+                        qrCodeContainer.innerHTML = qrSvg;
+                    } else {
+                        const qrBlob = await response.blob();
+                        const qrUrl = URL.createObjectURL(qrBlob);
+                        qrCodeContainer.innerHTML = `<img src="${qrUrl}" alt="Código QR para ${text}" class="mt-4">`;
+                    }
+                } else {
+                    qrCodeContainer.innerHTML = "<p class='text-red-500'>Error al generar el código QR. Por favor, intenta de nuevo.</p>";
+                }
+            } catch (error) {
+                qrCodeContainer.innerHTML = "<p class='text-red-500'>Error al conectar con el servidor. Por favor, verifica tu conexión.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
